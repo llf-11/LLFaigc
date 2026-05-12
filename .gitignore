@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-.idea/
-.vscode/
-.env
-config/.env
-*.tmp
-*.bak
-*.log
