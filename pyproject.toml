@@ -1,0 +1,13 @@
+[project]
+name = "LLFaigc"
+description = "Filtered ComfyUI nodes for RunningHub image and video OpenAPI models"
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/llf-11/LLFaigc"
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "LLFaigc"
+Icon = ""
