@@ -31,7 +31,7 @@ ComfyUI 自定义节点库，用于调用 RunningHub OpenAPI。
 放到 ComfyUI 的 `custom_nodes` 目录：
 
 ```bash
-git clone https://github.com/llf-11/Comfyui-LLFaigc.git
+git clone https://github.com/llf-11/LLFaigc.git
 ```
 
 安装依赖：
