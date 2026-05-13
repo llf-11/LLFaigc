@@ -392,6 +392,21 @@ _DEFAULT_MULTI_COUNT = {"IMAGE": 9, "VIDEO": 3, "AUDIO": 3}
 # Main factory
 # ---------------------------------------------------------------------------
 
+def _split_prompts(text):
+    """Split text into individual prompts using double-newline as delimiter.
+
+    Two consecutive newlines (blank line) separates prompts.
+    Single newlines within a prompt are preserved.
+    Leading/trailing whitespace is stripped from each prompt.
+    Empty prompts are skipped.
+    """
+    if not text or not text.strip():
+        return []
+    normalized = text.replace('\r\n', '\n').replace('\r', '\n')
+    blocks = re.split(r'\n\n+', normalized)
+    return [block.strip() for block in blocks if block.strip()]
+
+
 def create_node_class(model_def: Dict) -> type:
     """
     Create a ComfyUI node class from a model definition dict.
@@ -419,6 +434,10 @@ def create_node_class(model_def: Dict) -> type:
     # dynamic_endpoint: {"has_media": "endpoint_with_images", "no_media": "endpoint_text_only"}
     # When any IMAGE/VIDEO/AUDIO input is connected, use has_media endpoint; otherwise no_media.
     dynamic_endpoint = model_def.get("dynamic_endpoint", None)
+    # batch_prompt: when True, the prompt field supports multi-prompt batch mode.
+    # User separates prompts with a blank line (double Enter). Each prompt produces
+    # images that are concatenated into a single IMAGE batch output.
+    batch_prompt = model_def.get("batch_prompt", False)
     real_person_asset_slots = [
         str(slot).strip()
         for slot in model_def.get("real_person_asset_slots", [])
@@ -567,6 +586,7 @@ def create_node_class(model_def: Dict) -> type:
     # ---- Freeze all values for closure safety ----
     _endpoint = endpoint
     _dynamic_endpoint = dynamic_endpoint
+    _batch_prompt = batch_prompt
     _category = category
     _output_type = output_type
     _ret_types = ret_types
@@ -963,6 +983,121 @@ def create_node_class(model_def: Dict) -> type:
                 return (result_urls[0],)
             else:
                 return (result_urls[0],)
+
+    # ---- Batch prompt support ----
+    # When batch_prompt is enabled, override execute to split the prompt
+    # field on double-newlines and run each sub-prompt independently,
+    # then merge all image results into a single batch.
+
+    if _batch_prompt and _output_type == "image":
+
+        def _batch_execute(self, **kwargs):
+            """execute override: split prompt on blank lines, run each, merge results."""
+            skip_error = kwargs.pop("skip_error", False)
+
+            # Find the prompt field key
+            prompt_key = None
+            for p in _non_media:
+                if p.get("fieldKey", "").lower() in ("prompt", "text"):
+                    prompt_key = p["fieldKey"]
+                    break
+            if not prompt_key:
+                # No prompt field found, fall back to normal execute
+                return BaseNode.execute(self, skip_error=skip_error, **kwargs)
+
+            raw_prompt = kwargs.get(prompt_key, "")
+            prompt_list = _split_prompts(raw_prompt)
+
+            # Single prompt (or empty) -> normal path
+            if len(prompt_list) <= 1:
+                return BaseNode.execute(self, skip_error=skip_error, **kwargs)
+
+            total = len(prompt_list)
+            print(f"[{self._log_prefix}] Batch mode: {total} prompts detected")
+
+            all_primary = []
+            all_urls = []
+            all_responses = []
+
+            try:
+                comfy.utils  # noqa: ensure available
+                pbar = comfy.utils.ProgressBar(100) if COMFYUI_AVAILABLE else None
+            except Exception:
+                pbar = None
+
+            for idx, single_prompt in enumerate(prompt_list):
+                print(f"[{self._log_prefix}] [{idx + 1}/{total}] \"{single_prompt[:80]}{'...' if len(single_prompt) > 80 else ''}\"")
+
+                # Override the prompt for this iteration
+                kwargs[prompt_key] = single_prompt
+
+                try:
+                    result = BaseNode.execute(self, skip_error=True, **kwargs)
+                    result_tuple = result.get("result", result) if isinstance(result, dict) else result
+                    # result_tuple = (IMAGE, url_str, response_str)
+                    if result_tuple and len(result_tuple) >= 1:
+                        primary = result_tuple[0]
+                        if primary is not None and hasattr(primary, 'shape') and len(primary.shape) >= 3:
+                            all_primary.append(primary)
+                        if len(result_tuple) >= 2 and result_tuple[1]:
+                            all_urls.append(str(result_tuple[1]))
+                        if len(result_tuple) >= 3 and result_tuple[2]:
+                            all_responses.append(str(result_tuple[2]))
+                except Exception as e:
+                    print(f"[{self._log_prefix}] [!] Prompt #{idx + 1} failed: {e}")
+                    if not skip_error and not all_primary:
+                        raise
+
+                # Update progress
+                if pbar:
+                    try:
+                        pbar.update_absolute(int((idx + 1) / total * 100), 100)
+                    except Exception:
+                        pass
+
+            if not all_primary:
+                error_msg = f"[{self._log_prefix}] All {total} prompts failed to generate images."
+                print(error_msg)
+                if skip_error:
+                    return self._make_error_result(error_msg)
+                raise RuntimeError(error_msg)
+
+            # Normalize all tensors to the most common size (same as GPT-Image-2)
+            from comfy.utils import common_upscale
+
+            size_counts = {}
+            for t in all_primary:
+                h, w = t.shape[1], t.shape[2]
+                size_counts[(h, w)] = size_counts.get((h, w), 0) + t.shape[0]
+            target_size = max(size_counts, key=size_counts.get) if size_counts else (1024, 1024)
+
+            normalized = []
+            for t in all_primary:
+                h, w = t.shape[1], t.shape[2]
+                if (h, w) != target_size:
+                    t_chw = t.movedim(-1, 1)
+                    t_resized = common_upscale(t_chw, target_size[1], target_size[0], "lanczos", "disabled")
+                    normalized.append(t_resized.movedim(1, -1))
+                else:
+                    normalized.append(t)
+
+            combined = torch.cat(normalized, dim=0)
+
+            url_str = "\n".join(all_urls)
+            response_str = "\n---\n".join(all_responses) if all_responses else ""
+
+            summary_info = (
+                f"[{self._log_prefix}] Batch complete: {total} prompts, "
+                f"{combined.shape[0]} images generated\n"
+            )
+
+            result_tuple = (combined, url_str, response_str)
+            return {
+                "ui": {"text": [url_str, summary_info + response_str]},
+                "result": result_tuple,
+            }
+
+        NodeClass.execute = _batch_execute
 
     # Set proper class identity
     NodeClass.__name__ = class_name

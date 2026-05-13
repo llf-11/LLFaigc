@@ -219,14 +219,15 @@
     ]
   },
   {
-    "class_name": "RhartImageG2Unified",
-    "display_name": "RH 全能图片G-2.0-低价渠道版",
-    "name_cn": "全能图片G-2.0-低价渠道版",
-    "name_en": "gpt-image-2.0/unified-channel-low-price",
-    "endpoint": "rhart-image-g-2/text-to-image",
-    "output_type": "image",
-    "category": "LLFaigc/图像生成/全能图片G系列",
-    "dynamic_endpoint": {
+  "class_name": "RhartImageG2Unified",
+  "display_name": "RH 全能图片G-2.0-低价渠道版",
+  "name_cn": "全能图片G-2.0-低价渠道版",
+  "name_en": "gpt-image-2.0/unified-channel-low-price",
+  "endpoint": "rhart-image-g-2/text-to-image",
+  "output_type": "image",
+  "category": "LLFaigc/图像生成/全能图片G系列",
+  "batch_prompt": true,
+  "dynamic_endpoint": {
       "no_media": "rhart-image-g-2/text-to-image",
       "has_media": "rhart-image-g-2/image-to-image"
     },
