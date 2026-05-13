@@ -12,17 +12,20 @@ from .nodes.assets import (
     NODE_CLASS_MAPPINGS as _asset_class_mappings,
     NODE_DISPLAY_NAME_MAPPINGS as _asset_display_mappings,
 )
+from .nodes.gpt_image2_node import LLFaigcGptImage2Official
 
 _class_mappings, _display_mappings = create_all_nodes()
 
 NODE_CLASS_MAPPINGS = {
     "LLFaigcSettingsNode": RHSettingsNode,
+    "LLFaigcGptImage2Official": LLFaigcGptImage2Official,
     **_asset_class_mappings,
     **_class_mappings,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "LLFaigcSettingsNode": "LLFaigc OpenAPI Settings",
+    "LLFaigcGptImage2Official": "LLFaigc GPT-Image-2 Official",
     **_asset_display_mappings,
     **_display_mappings,
 }
