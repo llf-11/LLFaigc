@@ -6,7 +6,7 @@
     "name_en": "gpt-image-1.5/text-to-image-official-stable",
     "endpoint": "rhart-image-g-1.5-official/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片G系列",
+    "category": "LLFaigc/图像生成/全能图片G系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -100,7 +100,7 @@
     "name_en": "gpt-image-1.5/image-to-image-official-stable",
     "endpoint": "rhart-image-g-1.5-official/image-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片G系列",
+    "category": "LLFaigc/图像生成/全能图片G系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -225,7 +225,7 @@
     "name_en": "gpt-image-2.0/edit-channel-low-price",
     "endpoint": "rhart-image-g-2/image-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片G系列",
+    "category": "LLFaigc/图像生成/全能图片G系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -353,7 +353,7 @@
     "name_en": "gpt-image-2.0/text-to-image-channel-low-price",
     "endpoint": "rhart-image-g-2/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片G系列",
+    "category": "LLFaigc/图像生成/全能图片G系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -470,7 +470,7 @@
     "name_en": "gpt-image-2/text-to-image-official-stable",
     "endpoint": "rhart-image-g-2-official/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片G系列",
+    "category": "LLFaigc/图像生成/全能图片G系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -600,7 +600,7 @@
     "name_en": "gpt-image-2/image-to-image-official-stable",
     "endpoint": "rhart-image-g-2-official/image-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片G系列",
+    "category": "LLFaigc/图像生成/全能图片G系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -741,7 +741,7 @@
     "name_en": "nano-banana/edit-channel-low-price",
     "endpoint": "rhart-image-v1/edit",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -837,7 +837,7 @@
     "name_en": "nano-banana/text-to-image-channel-low-price",
     "endpoint": "rhart-image-v1/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -922,7 +922,7 @@
     "name_en": "nano-banana-pro/edit-channel-low-price",
     "endpoint": "rhart-image-n-pro/edit",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "imageUrls",
@@ -1038,7 +1038,7 @@
     "name_en": "nano-banana-pro/text-to-image-channel-low-price",
     "endpoint": "rhart-image-n-pro/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -1143,7 +1143,7 @@
     "name_en": "nano-banana-pro/edit-official-stable",
     "endpoint": "rhart-image-n-pro-official/edit",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "imageUrls",
@@ -1259,7 +1259,7 @@
     "name_en": "nano-banana-pro/text-to-image-official-stable",
     "endpoint": "rhart-image-n-pro-official/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "resolution",
@@ -1364,7 +1364,7 @@
     "name_en": "nano-banana-pro/text-to-image-ultra-official-stable",
     "endpoint": "rhart-image-n-pro-official/text-to-image-ultra",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -1464,7 +1464,7 @@
     "name_en": "nano-banana-pro/edit-ultra-official-stable",
     "endpoint": "rhart-image-n-pro-official/edit-ultra",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "imageUrls",
@@ -1575,7 +1575,7 @@
     "name_en": "nano-banana2-gemini31flash/text-to-image-channel-low-price",
     "endpoint": "rhart-image-n-g31-flash/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -1699,7 +1699,7 @@
     "name_en": "nano-banana2-gemini31flash/image-to-image-channel-low-price",
     "endpoint": "rhart-image-n-g31-flash/image-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "imageUrls",
@@ -1835,7 +1835,7 @@
     "name_en": "nano-banana2-gemini31flash/text-to-image-official-stable",
     "endpoint": "rhart-image-n-g31-flash-official/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -1960,7 +1960,7 @@
     "name_en": "nano-banana2-gemini31flash/image-to-image-official-stable",
     "endpoint": "rhart-image-n-g31-flash-official/image-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "imageUrls",
@@ -2096,7 +2096,7 @@
     "name_en": "nano-banana/text-to-image-official-stable",
     "endpoint": "rhart-image-v1-official/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2181,7 +2181,7 @@
     "name_en": "nano-banana/edit-official-stable",
     "endpoint": "rhart-image-v1-official/edit",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片系列",
+    "category": "LLFaigc/图像生成/全能图片系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2277,7 +2277,7 @@
     "name_en": "grok-3-image-to-image",
     "endpoint": "rhart-image-g-3/image-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片X",
+    "category": "LLFaigc/图像生成/全能图片X",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2308,7 +2308,7 @@
     "name_en": "grok-4-image-image-to-image",
     "endpoint": "rhart-image-g-4/image-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片X",
+    "category": "LLFaigc/图像生成/全能图片X",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2337,7 +2337,7 @@
     "name_en": "grok-3-image-text-to-image",
     "endpoint": "rhart-image-g-3/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片X",
+    "category": "LLFaigc/图像生成/全能图片X",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2356,7 +2356,7 @@
     "name_en": "grok-4-image-text-to-image",
     "endpoint": "rhart-image-g-4/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片X",
+    "category": "LLFaigc/图像生成/全能图片X",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2374,7 +2374,7 @@
     "name_en": "grok-image/image-to-image/channel-low-price",
     "endpoint": "rhart-image-g/image-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片X",
+    "category": "LLFaigc/图像生成/全能图片X",
     "params": [
       {
         "fieldKey": "model",
@@ -2432,7 +2432,7 @@
     "name_en": "grok-image/text-to-image/channel-low-price",
     "endpoint": "rhart-image-g/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片X",
+    "category": "LLFaigc/图像生成/全能图片X",
     "params": [
       {
         "fieldKey": "model",
@@ -2515,7 +2515,7 @@
     "name_en": "xai/grok-imagine-image/edit-official-stable",
     "endpoint": "rhart-image-x-official/edit",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片X",
+    "category": "LLFaigc/图像生成/全能图片X",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2544,7 +2544,7 @@
     "name_en": "xai/grok-imagine-image/text-to-image-official-stable",
     "endpoint": "rhart-image-x-official/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-图像生成/全能图片X",
+    "category": "LLFaigc/图像生成/全能图片X",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2649,7 +2649,7 @@
     "name_en": "sora-2/image-to-video-realistic-official-stable",
     "endpoint": "rhart-video-s-official/image-to-video-realistic",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2701,7 +2701,7 @@
     "name_en": "sora-upload-character-channel-low-price",
     "endpoint": "rhart-video-s/sora-upload-character",
     "output_type": "string",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "videoUrl",
@@ -2723,7 +2723,7 @@
     "name_en": "sora-2/text-to-video-official-stable",
     "endpoint": "rhart-video-s-official/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2782,7 +2782,7 @@
     "name_en": "sora-2/image-to-video-official-stable",
     "endpoint": "rhart-video-s-official/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2834,7 +2834,7 @@
     "name_en": "sora-2/text-to-video-pro-official-stable",
     "endpoint": "rhart-video-s-official/text-to-video-pro",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -2928,7 +2928,7 @@
     "name_en": "sora-2/image-to-video-pro-official-stable",
     "endpoint": "rhart-video-s-official/image-to-video-pro",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -3011,7 +3011,7 @@
     "name_en": "sora-2/image-to-video-asyn-channel-low-price",
     "endpoint": "rhart-video-s/image-to-video-asyn",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -3083,7 +3083,7 @@
     "name_en": "sora-upload-character-official",
     "endpoint": "rhart-video-s-official/sora-upload-character",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "videoUrl",
@@ -3111,7 +3111,7 @@
     "name_en": "sora-2/image-to-video-channel-low-price",
     "endpoint": "rhart-video-s/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -3188,7 +3188,7 @@
     "name_en": "sora-2/text-to-video-channel-low-price",
     "endpoint": "rhart-video-s/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频S系列",
+    "category": "LLFaigc/视频生成/全能视频S系列",
     "params": [
       {
         "fieldKey": "duration",
@@ -3256,7 +3256,7 @@
     "name_en": "kling-v2.5-turbo-pro/text-to-video",
     "endpoint": "kling-v2.5-turbo-pro/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -3335,7 +3335,7 @@
     "name_en": "kling-v2.5-turbo-pro/image-to-video",
     "endpoint": "kling-v2.5-turbo-pro/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -3412,7 +3412,7 @@
     "name_en": "kling-v2.5-turbo-std/image-to-video",
     "endpoint": "kling-v2.5-turbo-std/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -3480,7 +3480,7 @@
     "name_en": "kling-video-o1/text-to-video",
     "endpoint": "kling-video-o1/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -3558,7 +3558,7 @@
     "name_en": "kling-video-o1/image-to-video",
     "endpoint": "kling-video-o1/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -3647,7 +3647,7 @@
     "name_en": "kling-video-o1/start-to-end",
     "endpoint": "kling-video-o1/start-to-end",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -3747,7 +3747,7 @@
     "name_en": "kling-video-o1-std/refrence-to-video",
     "endpoint": "kling-video-o1-std/refrence-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "mode",
@@ -3855,7 +3855,7 @@
     "name_en": "kling-video-o1-std/edit-video",
     "endpoint": "kling-video-o1-std/edit-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "mode",
@@ -3923,7 +3923,7 @@
     "name_en": "kling-v2.6-pro-text-to-video",
     "endpoint": "kling-v2.6-pro/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -4009,7 +4009,7 @@
     "name_en": "kling-v2.6-pro-image-to-video",
     "endpoint": "kling-v2.6-pro/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -4084,7 +4084,7 @@
     "name_en": "kling-v3.0-std-text-to-video",
     "endpoint": "kling-v3.0-std/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -4260,7 +4260,7 @@
     "name_en": "kling-v3.0-std-image-to-video",
     "endpoint": "kling-v3.0-std/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -4428,7 +4428,7 @@
     "name_en": "kling-v3.0-pro-text-to-video",
     "endpoint": "kling-v3.0-pro/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -4604,7 +4604,7 @@
     "name_en": "kling-v3.0-pro-image-to-video",
     "endpoint": "kling-v3.0-pro/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -4772,7 +4772,7 @@
     "name_en": "kling-video-o3-std-text-to-video",
     "endpoint": "kling-video-o3-std/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -4864,7 +4864,7 @@
     "name_en": "kling-video-o3-pro-text-to-video",
     "endpoint": "kling-video-o3-pro/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -4956,7 +4956,7 @@
     "name_en": "kling-video-o3-std-image-to-video",
     "endpoint": "kling-video-o3-std/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -5041,7 +5041,7 @@
     "name_en": "kling-video-o3-pro-image-to-video",
     "endpoint": "kling-video-o3-pro/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -5126,7 +5126,7 @@
     "name_en": "kling-v2.6-std-motion-control",
     "endpoint": "kling-v2.6-std/motion-control",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -5203,7 +5203,7 @@
     "name_en": "kling-v2.6-pro-motion-control",
     "endpoint": "kling-v2.6-pro/motion-control",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -5280,7 +5280,7 @@
     "name_en": "kling-video-o3-std/video-edit",
     "endpoint": "kling-video-o3-std/video-edit",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -5328,7 +5328,7 @@
     "name_en": "kling-video-o3-pro/video-edit",
     "endpoint": "kling-video-o3-pro/video-edit",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -5376,7 +5376,7 @@
     "name_en": "kling-video-o3-std/reference-to-video",
     "endpoint": "kling-video-o3-std/reference-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -5495,7 +5495,7 @@
     "name_en": "kling-video-o3-pro/reference-to-video",
     "endpoint": "kling-video-o3-pro/reference-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -5614,7 +5614,7 @@
     "name_en": "kling-elements",
     "endpoint": "kling-elements",
     "output_type": "string",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "name",
@@ -5661,7 +5661,7 @@
     "name_en": "kling-v3.0-std-motion-control",
     "endpoint": "kling-v3.0-std/motion-control",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -5734,7 +5734,7 @@
     "name_en": "kling-v3.0-pro-motion-control",
     "endpoint": "kling-v3.0-pro/motion-control",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -5807,7 +5807,7 @@
     "name_en": "kling-lip-sync/identify-face",
     "endpoint": "kling-lip-sync/identify-face",
     "output_type": "string",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "videoUrl",
@@ -5834,7 +5834,7 @@
     "name_en": "kling-lip-sync/tts",
     "endpoint": "kling-lip-sync/tts",
     "output_type": "string",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "text",
@@ -6125,7 +6125,7 @@
     "name_en": "kling-lip-sync/lip-sync-video",
     "endpoint": "kling-lip-sync/lip-sync-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "sessionId",
@@ -6212,7 +6212,7 @@
     "name_en": "kling-v3.0-4k-motion-control",
     "endpoint": "kling-v3.0-4k/motion-control",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": []
   },
   {
@@ -6222,7 +6222,7 @@
     "name_en": "kling-v3.0-4k-image-to-video",
     "endpoint": "kling-v3-4k/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -6326,7 +6326,7 @@
     "name_en": "kling-v3-4k-text-to-video",
     "endpoint": "kling-v3-4k/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -6502,7 +6502,7 @@
     "name_en": "kling-video-o3-4k-text-to-video",
     "endpoint": "kling-video-o3-4k/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -6595,7 +6595,7 @@
     "name_en": "kling-video-o3-4k-image-to-video",
     "endpoint": "kling-video-o3-4k/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -6681,7 +6681,7 @@
     "name_en": "kling-video-o3-4k-reference-to-video",
     "endpoint": "kling-video-o3-4k/reference-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -6793,7 +6793,7 @@
     "name_en": "kling-v2-ai-avatar-standard/image-audio-to-video",
     "endpoint": "kling-v2-ai-avatar-standard/image-audio-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -6830,7 +6830,7 @@
     "name_en": "kling-v2-ai-avatar-pro/image-audio-to-video",
     "endpoint": "kling-v2-ai-avatar-pro/image-audio-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -6867,7 +6867,7 @@
     "name_en": "kling-v2.5-turbo-std/text-to-video",
     "endpoint": "kling-v2.5-turbo-std/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -6951,7 +6951,7 @@
     "name_en": "kling-o3/element",
     "endpoint": "kling-elements-advanced",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/可灵系列",
+    "category": "LLFaigc/视频生成/可灵系列",
     "params": [
       {
         "fieldKey": "elementName",
@@ -7056,7 +7056,7 @@
     "name_en": "alibaba/wan-2.6/text-to-video",
     "endpoint": "alibaba/wan-2.6/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -7149,7 +7149,7 @@
     "name_en": "alibaba/wan-2.6/image-to-video",
     "endpoint": "alibaba/wan-2.6/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "imageUrl",
@@ -7244,7 +7244,7 @@
     "name_en": "wan-2.6-image-to-video-flash",
     "endpoint": "alibaba/wan-2.6/image-to-video-flash",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -7408,7 +7408,7 @@
     "display_name": "RH 万相2.6-参考生视频Flash",
     "endpoint": "alibaba/wan-2.6/reference-to-video-flash",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -7599,7 +7599,7 @@
     "display_name": "RH 万相2.6-参考生视频",
     "endpoint": "alibaba/wan-2.6/reference-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -7784,7 +7784,7 @@
     "name_en": "wan-2.7/text-to-video",
     "endpoint": "alibaba/wan-2.7/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -7974,7 +7974,7 @@
     "name_en": "wan-2.7-reference-to-video",
     "endpoint": "alibaba/wan-2.7/reference-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -8161,7 +8161,7 @@
     "name_en": "wan-2.7/image-edit",
     "endpoint": "alibaba/wan-2.7/image-edit",
     "output_type": "image",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "imageUrls",
@@ -8214,7 +8214,7 @@
     "name_en": "wan-2.7/image-edit-pro",
     "endpoint": "alibaba/wan-2.7/image-edit-pro",
     "output_type": "image",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "imageUrls",
@@ -8267,7 +8267,7 @@
     "name_en": "wan-2.7/text-to-image",
     "endpoint": "alibaba/wan-2.7/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -8317,7 +8317,7 @@
     "name_en": "wan-2.7/text-to-image-pro",
     "endpoint": "alibaba/wan-2.7/text-to-image-pro",
     "output_type": "image",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -8367,7 +8367,7 @@
     "name_en": "wan-2.7/image-to-video",
     "endpoint": "alibaba/wan-2.7/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -8540,7 +8540,7 @@
     "name_en": "wan-2.7/video-extend",
     "endpoint": "alibaba/wan-2.7/video-extend",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -8705,7 +8705,7 @@
     "name_en": "wan-2.7/video-edit",
     "endpoint": "alibaba/wan-2.7/video-edit",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -8886,7 +8886,7 @@
     "name_en": "wan-2.5-preview/text-to-video",
     "endpoint": "alibaba/wan-2.5-preview/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -9036,7 +9036,7 @@
     "name_en": "wan-2.5-preview/image-to-video",
     "endpoint": "alibaba/wan-2.5-preview/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -9145,7 +9145,7 @@
     "name_en": "wan-2.5-preview/text-to-image",
     "endpoint": "alibaba/wan-2.5-preview/text-to-image",
     "output_type": "image",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -9237,7 +9237,7 @@
     "name_en": "wan-2.5-preview/image-to-image",
     "endpoint": "alibaba/wan-2.5-preview/image-to-image",
     "output_type": "image",
-    "category": "LLFaigc-视频生成/Wan Video Models系列",
+    "category": "LLFaigc/视频生成/Wan Video Models系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -9360,7 +9360,7 @@
     "name_en": "xai/grok-imagine/image-to-video-channel-low-price",
     "endpoint": "rhart-video-g/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频X系列",
+    "category": "LLFaigc/视频生成/全能视频X系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -9457,7 +9457,7 @@
     "name_en": "xai/grok-imagine/text-to-video-channel-low-price",
     "endpoint": "rhart-video-g/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频X系列",
+    "category": "LLFaigc/视频生成/全能视频X系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -9543,7 +9543,7 @@
     "name_en": "xai/grok-imagine/image-to-video-official-stable",
     "endpoint": "rhart-video-g-official/image-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频X系列",
+    "category": "LLFaigc/视频生成/全能视频X系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -9612,7 +9612,7 @@
     "name_en": "xai/grok-imagine/text-to-video-official-stable",
     "endpoint": "rhart-video-g-official/text-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频X系列",
+    "category": "LLFaigc/视频生成/全能视频X系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -9697,7 +9697,7 @@
     "name_en": "xai/grok-imagine/edit-video-official-stable",
     "endpoint": "rhart-video-g-official/edit-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频X系列",
+    "category": "LLFaigc/视频生成/全能视频X系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -9749,7 +9749,7 @@
     "name_en": "xai/grok-imagine-video/reference-to-video-official-stable",
     "endpoint": "rhart-video-g-official/reference-to-video",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频X系列",
+    "category": "LLFaigc/视频生成/全能视频X系列",
     "params": [
       {
         "fieldKey": "imageUrls",
@@ -9820,7 +9820,7 @@
     "name_en": "xai/grok-imagine-video/video-extend-official-stable",
     "endpoint": "rhart-video-g-official/video-extend",
     "output_type": "video",
-    "category": "LLFaigc-视频生成/全能视频X系列",
+    "category": "LLFaigc/视频生成/全能视频X系列",
     "params": [
       {
         "fieldKey": "videoUrl",
@@ -9876,7 +9876,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "real_person_mode_default": true,
     "params": [
       {
@@ -10084,7 +10084,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "real_person_mode_default": true,
     "params": [
       {
@@ -10292,7 +10292,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "real_person_mode_default": true,
     "asset_ids_mode": "image_to_video",
     "real_person_asset_slots": [
@@ -10514,7 +10514,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "real_person_mode_default": true,
     "asset_ids_mode": "image_to_video",
     "real_person_asset_slots": [
@@ -10736,7 +10736,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "real_person_mode_default": true,
     "asset_ids_mode": "multimodal_video",
     "real_person_asset_slots": [
@@ -10983,7 +10983,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "real_person_mode_default": true,
     "asset_ids_mode": "multimodal_video",
     "real_person_asset_slots": [
@@ -11231,7 +11231,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -11450,7 +11450,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -11714,7 +11714,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -12043,7 +12043,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -12257,7 +12257,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "params": [
       {
         "fieldKey": "prompt",
@@ -12516,7 +12516,7 @@
         "source": "last_frame"
       }
     ],
-    "category": "LLFaigc-视频生成/Seedance2.0系列",
+    "category": "LLFaigc/视频生成/Seedance2.0系列",
     "params": [
       {
         "fieldKey": "prompt",

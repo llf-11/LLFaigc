@@ -20,7 +20,7 @@ class RHSettingsNode:
 
     RETURN_TYPES = ("RH_OPENAPI_CONFIG",)
     RETURN_NAMES = ("api_config",)
-    CATEGORY = "LLFaigc-设置"
+    CATEGORY = "LLFaigc/设置"
     FUNCTION = "process"
 
     def process(self, base_url, apiKey):
