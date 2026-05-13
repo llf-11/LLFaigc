@@ -3,6 +3,9 @@ LLFaigc - GPT-Image-2 Official node (ported from Comfyui-zhenzhen).
 
 Self-contained: no dependency on zhenzhen's Comfly.py, utils.py, or Comflyapi.json.
 API key is provided via the node's ``api_key`` string input.
+
+Supports multi-prompt batch mode: one prompt per line, each line produces
+images that are concatenated into a single output batch.
 """
 
 import io
@@ -10,6 +13,7 @@ import math
 import re
 import time
 
+import comfy
 import numpy as np
 import requests
 import torch
@@ -46,12 +50,33 @@ def _downscale_input(image):
     return s
 
 
+def _split_prompts(text):
+    """Split text into individual prompts using double-newline as delimiter.
+
+    Two consecutive newlines (blank line) separates prompts.
+    Single newlines within a prompt are preserved.
+    Leading/trailing whitespace is stripped from each prompt.
+    Empty prompts are skipped.
+    """
+    if not text or not text.strip():
+        return []
+    # Normalize line endings, then split on double-newline
+    normalized = text.replace('\r\n', '\n').replace('\r', '\n')
+    blocks = re.split(r'\n\n+', normalized)
+    return [block.strip() for block in blocks if block.strip()]
+
+
 # ---------------------------------------------------------------------------
 # Node class
 # ---------------------------------------------------------------------------
 
 class LLFaigcGptImage2Official:
-    """GPT-Image-2 official API node (zhenzhen-compatible, self-contained)."""
+    """GPT-Image-2 official API node (zhenzhen-compatible, self-contained).
+
+    Supports multi-prompt batch: fill in multiple prompts (one per line),
+    and the node will call the API for each prompt and combine all results
+    into a single IMAGE batch output.
+    """
 
     _ASPECT_RATIO_CHOICES = [
         "auto",
@@ -63,7 +88,7 @@ class LLFaigcGptImage2Official:
         "21:9", "9:21",
     ]
 
-    _RESOLUTION_CHOICES = ["1k", "2k", "4k"]
+    _RESOLUTION_CHOICES = ["auto", "1k", "2k", "4k"]
 
     _SIZE_MAP = {
         # 1:1
@@ -133,11 +158,11 @@ class LLFaigcGptImage2Official:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "prompt": ("STRING", {"multiline": True}),
                 "aspect_ratio": (cls._ASPECT_RATIO_CHOICES, {"default": "auto"}),
                 "resolution": (cls._RESOLUTION_CHOICES, {"default": "1k"}),
             },
             "optional": {
+                "prompts": ("STRING", {"multiline": True, "default": "", "tooltip": "Separate prompts with a blank line (double Enter). Single newlines within a prompt are preserved."}),
                 "image1": ("IMAGE",),
                 "image2": ("IMAGE",),
                 "image3": ("IMAGE",),
@@ -176,9 +201,9 @@ class LLFaigcGptImage2Official:
         }
 
     RETURN_TYPES = ("IMAGE", "STRING", "STRING")
-    RETURN_NAMES = ("image", "image_url", "response")
+    RETURN_NAMES = ("images", "image_url", "response")
     FUNCTION = "generate"
-    CATEGORY = "LLFaigc/\u56fe\u50cf\u751f\u6210"
+    CATEGORY = "LLFaigc/个人节点"
 
     def __init__(self):
         self.api_key = ""
@@ -378,7 +403,6 @@ class LLFaigcGptImage2Official:
         image6, image7, image8, image9, image10,
         image11, image12, image13, image14, image15, image16,
         mask,
-        pbar,
         max_poll_attempts,
         poll_interval,
         webhook,
@@ -397,7 +421,6 @@ class LLFaigcGptImage2Official:
         if webhook.strip():
             url += f"&webhook={webhook.strip()}"
 
-        pbar.update_absolute(10)
         response = requests.post(
             url,
             headers=self.get_headers_multipart(),
@@ -413,12 +436,11 @@ class LLFaigcGptImage2Official:
         if not task_id:
             raise RuntimeError(f"No task_id in response: {submit_result}")
 
-        print(f"Task submitted. Task ID: {task_id}")
-        pbar.update_absolute(20)
+        print(f"  [Prompt] \"{prompt[:80]}{'...' if len(prompt) > 80 else ''}\" -> Task ID: {task_id}")
 
         query_url = f"{_BASE_URL}/v1/images/tasks/{task_id}"
-        final_result = None
         image_url_first = ""
+        final_result = None
 
         for attempts in range(1, max_poll_attempts + 1):
             time.sleep(poll_interval)
@@ -427,19 +449,11 @@ class LLFaigcGptImage2Official:
                     query_url, headers=self.get_headers_multipart(), timeout=self.timeout
                 )
                 if status_response.status_code != 200:
-                    print(f"Status check failed: {status_response.status_code}")
+                    print(f"  Status check failed: {status_response.status_code}")
                     continue
                 status_data = status_response.json()
                 inner = status_data.get("data", {}) if isinstance(status_data, dict) else {}
                 status = inner.get("status", "")
-                progress_str = inner.get("progress", "0%")
-                try:
-                    if isinstance(progress_str, str) and progress_str.endswith("%"):
-                        progress_value = int(progress_str[:-1])
-                        pbar_value = min(95, 20 + int(progress_value * 0.75))
-                        pbar.update_absolute(pbar_value)
-                except (ValueError, AttributeError):
-                    pass
 
                 if status == "SUCCESS":
                     result_data = inner.get("data", {})
@@ -459,7 +473,6 @@ class LLFaigcGptImage2Official:
                         raise RuntimeError("Async task SUCCESS but no decodable image in data")
                     final_result = status_data
                     combined = torch.cat(tensors, dim=0)
-                    pbar.update_absolute(100)
                     return (combined, image_url_first, task_id, final_result)
                 if status == "FAILURE":
                     fail_reason = inner.get("fail_reason", "Unknown error")
@@ -467,7 +480,7 @@ class LLFaigcGptImage2Official:
             except RuntimeError:
                 raise
             except Exception as e:
-                print(f"Error polling task status: {str(e)}")
+                print(f"  Error polling task status: {str(e)}")
         raise RuntimeError(f"Failed to get image after {max_poll_attempts} poll attempts")
 
     def _items_to_tensors(self, result, max_retries=5, initial_timeout=300):
@@ -506,7 +519,7 @@ class LLFaigcGptImage2Official:
         image11, image12, image13, image14, image15, image16,
         mask, n, quality, size, background,
         output_format, output_compression, moderation, response_format, model,
-        max_retries, initial_timeout, pbar,
+        max_retries, initial_timeout,
     ):
         data, request_files = self._build_official_edits_multipart(
             prompt, image1, image2, image3, image4, image5,
@@ -515,7 +528,6 @@ class LLFaigcGptImage2Official:
             mask, n, quality, size, background,
             output_format, output_compression, moderation, response_format, model,
         )
-        pbar.update_absolute(20)
         response = self.make_request_with_retry(
             f"{_BASE_URL}/v1/images/edits",
             data=data,
@@ -523,11 +535,98 @@ class LLFaigcGptImage2Official:
             max_retries=max_retries,
             initial_timeout=initial_timeout,
         )
-        pbar.update_absolute(60)
         return response.json()
 
+    # -----------------------------------------------------------------------
+    # Generate images for a single prompt (returns tensor batch)
+    # -----------------------------------------------------------------------
+
+    def _generate_single(
+        self, prompt, aspect_ratio, resolution,
+        image1, image2, image3, image4, image5,
+        image6, image7, image8, image9, image10,
+        image11, image12, image13, image14, image15, image16,
+        mask, model, n, quality, background,
+        output_format, output_compression, moderation,
+        response_format, async_mode, webhook,
+        max_poll_attempts, poll_interval,
+        max_retries, initial_timeout,
+    ):
+        """Call API for a single prompt and return (tensor_batch, image_url, info_str)."""
+
+        size, error_msg = self._get_size_from_params(aspect_ratio, resolution)
+        if error_msg:
+            return None, "", error_msg
+
+        ok, err_msg = self._validate_gpt_image2_size(size)
+        if not ok:
+            return None, "", err_msg
+
+        try:
+            if async_mode:
+                combined, image_url, task_id, final_result = self._async_official(
+                    prompt,
+                    image1, image2, image3, image4, image5,
+                    image6, image7, image8, image9, image10,
+                    image11, image12, image13, image14, image15, image16,
+                    mask,
+                    max_poll_attempts, poll_interval, webhook,
+                    n, quality, size, background,
+                    output_format, output_compression, moderation,
+                    response_format, model, max_retries, initial_timeout,
+                )
+
+                info_lines = [
+                    f"  Mode: async (task {task_id})",
+                    f"  Model: {model} | Size: {size} | Quality: {quality}",
+                ]
+                if final_result:
+                    inner = final_result.get("data", {})
+                    inner_data = inner.get("data", {}) if isinstance(inner, dict) else {}
+                    if isinstance(inner_data, dict) and "usage" in inner_data:
+                        info_lines.append(f"  Tokens: {inner_data['usage'].get('total_tokens', 'N/A')}")
+                return combined, image_url or "", "\n".join(info_lines)
+
+            result = self._edits(
+                prompt, image1, image2, image3, image4, image5,
+                image6, image7, image8, image9, image10,
+                image11, image12, image13, image14, image15, image16,
+                mask, n, quality, size, background,
+                output_format, output_compression, moderation, response_format, model,
+                max_retries, initial_timeout,
+            )
+
+            if "data" not in result or not result["data"]:
+                return None, "", f"No image data in response: {result}"
+
+            tensors = self._items_to_tensors(result, max_retries, initial_timeout)
+            if not tensors:
+                return None, "", "No images decoded from response"
+
+            combined = torch.cat(tensors, dim=0)
+
+            info_lines = [
+                f"  Mode: sync | Model: {model} | Size: {size} | Quality: {quality}",
+            ]
+            if "usage" in result:
+                u = result["usage"]
+                if isinstance(u, dict):
+                    if "total_tokens" in u:
+                        info_lines.append(f"  Tokens: {u['total_tokens']}")
+            return combined, "", "\n".join(info_lines)
+
+        except Exception as e:
+            import traceback
+            print(f"  ERROR for prompt \"{prompt[:60]}...\": {e}")
+            print(traceback.format_exc())
+            return None, "", f"Error: {e}"
+
+    # -----------------------------------------------------------------------
+    # Main entry: generate
+    # -----------------------------------------------------------------------
+
     def generate(
-        self, prompt, aspect_ratio="1:1", resolution="1k",
+        self, prompts, aspect_ratio="1:1", resolution="1k",
         image1=None, image2=None, image3=None, image4=None, image5=None,
         image6=None, image7=None, image8=None, image9=None, image10=None,
         image11=None, image12=None, image13=None, image14=None, image15=None, image16=None,
@@ -549,116 +648,102 @@ class LLFaigcGptImage2Official:
             print(msg)
             return (blank_t, "", msg)
 
+        # Parse multi-line prompts
+        prompt_list = _split_prompts(prompts)
+        if not prompt_list:
+            msg = "No prompts provided. Enter at least one prompt (one per line)."
+            print(msg)
+            return (blank_t, "", msg)
+
+        total_prompts = len(prompt_list)
+        print(f"**LLFaigc GPT-Image-2 Batch** Starting batch with {total_prompts} prompt(s)")
+
+        # Validate size once (same for all prompts)
         size, error_msg = self._get_size_from_params(aspect_ratio, resolution)
         if error_msg:
             print(error_msg)
             return (blank_t, "", error_msg)
 
-        input_images = [
-            img for img in [image1, image2, image3, image4, image5,
-                            image6, image7, image8, image9, image10,
-                            image11, image12, image13, image14, image15, image16]
-            if img is not None
-        ]
-        num_input_images = len(input_images)
-
         pbar = comfy.utils.ProgressBar(100)
-        pbar.update_absolute(5)
 
-        def _info_common(mode_line):
-            s = f"**LLFaigc GPT-Image-2 (official)** {mode_line}\n"
-            s += f"Model: {model}\n"
-            s += f"Prompt: {prompt}\n"
-            s += f"Aspect Ratio: {aspect_ratio}\n"
-            s += f"Resolution: {resolution}\n"
-            s += f"Actual Size: {size}\n"
-            s += f"Quality: {quality}\n"
-            s += f"Input Images: {num_input_images}\n"
-            w, h = self._parse_size_wh(size)
-            if w is not None and h is not None and w * h > 2560 * 1440:
-                s += "(experimental output: total pixels > 2560x1440)\n"
-            if background != "auto":
-                s += f"Background: {background}\n"
-            s += f"Output: {output_format}\n"
-            return s
+        all_tensors = []
+        all_urls = []
+        all_info = []
 
-        try:
-            ok, err_msg = self._validate_gpt_image2_size(size)
-            if not ok:
-                print(err_msg)
-                return (blank_t, "", err_msg)
+        for idx, single_prompt in enumerate(prompt_list):
+            print(f"[{idx + 1}/{total_prompts}] Generating: \"{single_prompt[:80]}{'...' if len(single_prompt) > 80 else ''}\"")
 
-            if async_mode:
-                combined, image_url, task_id, final_result = self._async_official(
-                    prompt,
-                    image1, image2, image3, image4, image5,
-                    image6, image7, image8, image9, image10,
-                    image11, image12, image13, image14, image15, image16,
-                    mask,
-                    pbar, max_poll_attempts, poll_interval, webhook,
-                    n, quality, size, background,
-                    output_format, output_compression, moderation,
-                    response_format, model, max_retries, initial_timeout,
-                )
-                mode = "async: POST /v1/images/edits?async=true, GET /v1/images/tasks/{task_id}"
-                info = _info_common(mode)
-                info += f"Task ID: {task_id}\n"
-                if image_url:
-                    info += f"Image URL: {image_url}\n"
-                if final_result:
-                    inner = final_result.get("data", {})
-                    inner_data = inner.get("data", {}) if isinstance(inner, dict) else {}
-                    if isinstance(inner_data, dict) and "usage" in inner_data:
-                        usage = inner_data["usage"]
-                        info += f"Total Tokens: {usage.get('total_tokens', 'N/A')}\n"
-                return (combined, image_url or "", info)
-
-            result = self._edits(
-                prompt, image1, image2, image3, image4, image5,
+            result_tensor, result_url, result_info = self._generate_single(
+                single_prompt, aspect_ratio, resolution,
+                image1, image2, image3, image4, image5,
                 image6, image7, image8, image9, image10,
                 image11, image12, image13, image14, image15, image16,
-                mask, n, quality, size, background,
-                output_format, output_compression, moderation, response_format, model,
-                max_retries, initial_timeout, pbar,
+                mask, model, n, quality, background,
+                output_format, output_compression, moderation,
+                response_format, async_mode, webhook,
+                max_poll_attempts, poll_interval,
+                max_retries, initial_timeout,
             )
-            mode = "sync: /v1/images/edits (multipart" + (
-                ", blank ref" if num_input_images == 0 else f", {num_input_images} images"
-            ) + (", mask" if mask is not None else "") + ")"
 
-            if "data" not in result or not result["data"]:
-                msg = f"No image data in response: {result}"
-                print(msg)
-                return (blank_t, "", msg)
+            if result_tensor is not None:
+                all_tensors.append(result_tensor)
+                if result_url:
+                    all_urls.append(result_url)
+            else:
+                print(f"  [!] Prompt #{idx + 1} failed: {result_info}")
+                if not skip_error:
+                    if all_tensors:
+                        # Return what we have so far on error
+                        pass
+                    else:
+                        return (blank_t, "", result_info)
 
-            tensors = self._items_to_tensors(result, max_retries, initial_timeout)
-            pbar.update_absolute(95)
+            # Update progress bar
+            progress = int((idx + 1) / total_prompts * 100)
+            pbar.update_absolute(progress)
 
-            if not tensors:
-                msg = "No images decoded from response"
-                print(msg)
-                return (blank_t, "", msg)
+            # Build info for this prompt
+            info_entry = f"[{idx + 1}/{total_prompts}] \"{single_prompt[:60]}{'...' if len(single_prompt) > 60 else ''}\"\n{result_info}"
+            all_info.append(info_entry)
 
-            combined = torch.cat(tensors, dim=0)
-            pbar.update_absolute(100)
+        # Combine all results - normalize to same size first
+        if not all_tensors:
+            msg = "All prompts failed to generate images."
+            print(msg)
+            return (blank_t, "", "\n".join(all_info) + "\n" + msg)
 
-            info = _info_common(mode)
-            if "usage" in result:
-                u = result["usage"]
-                if isinstance(u, dict):
-                    if "total_tokens" in u:
-                        info += f"Total tokens: {u['total_tokens']}\n"
-                    if "input_tokens" in u:
-                        info += f"Input tokens: {u['input_tokens']}\n"
-                    if "output_tokens" in u:
-                        info += f"Output tokens: {u['output_tokens']}\n"
+        # Find the most common size among all tensors
+        size_counts = {}
+        for t in all_tensors:
+            h, w = t.shape[1], t.shape[2]
+            size_counts[(h, w)] = size_counts.get((h, w), 0) + t.shape[0]
+        target_size = max(size_counts, key=size_counts.get) if size_counts else (1024, 1024)
 
-            return (combined, "", info)
+        # Resize all tensors to target_size
+        normalized = []
+        for t in all_tensors:
+            h, w = t.shape[1], t.shape[2]
+            if (h, w) != target_size:
+                # [B, H, W, C] -> [B, C, H, W] for common_upscale
+                t_chw = t.movedim(-1, 1)
+                t_resized = common_upscale(t_chw, target_size[1], target_size[0], "lanczos", "disabled")
+                normalized.append(t_resized.movedim(1, -1))
+            else:
+                normalized.append(t)
 
-        except Exception as e:
-            error_message = f"LLFaigc GPT-Image-2 error: {str(e)}"
-            import traceback
-            print(traceback.format_exc())
-            print(error_message)
-            if not skip_error:
-                raise
-            return (blank_t, "", error_message)
+        combined = torch.cat(normalized, dim=0)
+
+        summary = (
+            f"**LLFaigc GPT-Image-2 Batch** Complete\n"
+            f"Total prompts: {total_prompts}\n"
+            f"Successful: {len(all_tensors)}\n"
+            f"Total images generated: {combined.shape[0]}\n"
+            f"Model: {model}\n"
+            f"Aspect Ratio: {aspect_ratio}\n"
+            f"Resolution: {resolution}\n"
+            f"Output: {output_format}\n"
+            f"{'---' * 10}\n"
+            + "\n".join(all_info)
+        )
+
+        return (combined, all_urls[0] if all_urls else "", summary)
