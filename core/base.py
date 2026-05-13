@@ -237,8 +237,14 @@ class BaseNode(ABC):
         try:
             payload = self.build_payload(**kwargs)
             payload["appCode"] = "comfyui_rh_openapi"
+            # Support dynamic endpoint resolution (e.g. text-to-image vs image-to-image)
+            endpoint = getattr(self, '_resolve_endpoint', None)
+            if callable(endpoint):
+                actual_endpoint = endpoint(**kwargs)
+            else:
+                actual_endpoint = self.ENDPOINT
             task_id = submit(
-                self.ENDPOINT,
+                actual_endpoint,
                 payload,
                 api_key,
                 base_url,

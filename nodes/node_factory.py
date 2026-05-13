@@ -416,6 +416,9 @@ def create_node_class(model_def: Dict) -> type:
     category = model_def.get("category", "RunningHub")
     class_name = model_def.get("class_name", "GeneratedNode")
     asset_ids_mode = model_def.get("asset_ids_mode", "")
+    # dynamic_endpoint: {"has_media": "endpoint_with_images", "no_media": "endpoint_text_only"}
+    # When any IMAGE/VIDEO/AUDIO input is connected, use has_media endpoint; otherwise no_media.
+    dynamic_endpoint = model_def.get("dynamic_endpoint", None)
     real_person_asset_slots = [
         str(slot).strip()
         for slot in model_def.get("real_person_asset_slots", [])
@@ -563,6 +566,7 @@ def create_node_class(model_def: Dict) -> type:
 
     # ---- Freeze all values for closure safety ----
     _endpoint = endpoint
+    _dynamic_endpoint = dynamic_endpoint
     _category = category
     _output_type = output_type
     _ret_types = ret_types
@@ -581,10 +585,27 @@ def create_node_class(model_def: Dict) -> type:
         RETURN_TYPES = _ret_types
         RETURN_NAMES = _ret_names
         FUNCTION = "execute"
+        DYNAMIC_ENDPOINT = _dynamic_endpoint
 
         @classmethod
         def INPUT_TYPES(cls):
             return {"required": _required, "optional": _optional}
+
+        def _resolve_endpoint(self, **kwargs):
+            """Resolve the actual endpoint, supporting dynamic switching."""
+            if not _dynamic_endpoint:
+                return _endpoint
+            # Check if any media input is connected
+            has_media = False
+            for mi in _media_info:
+                value = kwargs.get(mi["comfy_name"])
+                if value is not None:
+                    has_media = True
+                    break
+            if has_media:
+                return _dynamic_endpoint.get("has_media", _endpoint)
+            else:
+                return _dynamic_endpoint.get("no_media", _endpoint)
 
         def prepare_inputs(self, **kwargs):
             """Upload local media and resolve unified asset_ids when enabled."""

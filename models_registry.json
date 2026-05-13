@@ -219,13 +219,17 @@
     ]
   },
   {
-    "class_name": "RhartImageG2ImageToImage",
-    "display_name": "RH 全能图片G-2.0-图生图-低价渠道版",
-    "name_cn": "全能图片G-2.0-图生图-低价渠道版",
-    "name_en": "gpt-image-2.0/edit-channel-low-price",
-    "endpoint": "rhart-image-g-2/image-to-image",
+    "class_name": "RhartImageG2Unified",
+    "display_name": "RH 全能图片G-2.0-低价渠道版",
+    "name_cn": "全能图片G-2.0-低价渠道版",
+    "name_en": "gpt-image-2.0/unified-channel-low-price",
+    "endpoint": "rhart-image-g-2/text-to-image",
     "output_type": "image",
     "category": "LLFaigc/图像生成/全能图片G系列",
+    "dynamic_endpoint": {
+      "no_media": "rhart-image-g-2/text-to-image",
+      "has_media": "rhart-image-g-2/image-to-image"
+    },
     "params": [
       {
         "fieldKey": "prompt",
@@ -233,15 +237,15 @@
         "required": true,
         "label": "prompt",
         "description": "prompt",
-        "defaultValue": "在马克杯的正中央，添加一个精致的几何风格狐狸 Logo，Logo 下方清晰地印着文字 \"Wild Fox\"。请保持原图的光影结构和陶瓷质感完全不变。 然后生成一张产品介绍说明书，比例为21：9",
+        "defaultValue": "",
         "maxLength": 20000
       },
       {
         "fieldKey": "imageUrls",
         "type": "IMAGE",
-        "required": true,
-        "label": "imageUrls",
-        "description": "imageUrls",
+        "required": false,
+        "label": "参考图(可选，连接后自动切换为图生图)",
+        "description": "imageUrls - 不连接=文生图，连接=图生图",
         "multipleInputs": true,
         "maxInputNum": 10,
         "accept": "[\"JPG\",\"PNG\"]",
@@ -252,124 +256,7 @@
         "type": "LIST",
         "required": false,
         "label": "aspectRatio",
-        "description": "aspectRatio (sent as API field AND injected as a prefix into prompt)",
-        "defaultValue": "empty",
-        "options": [
-          {
-            "value": "empty"
-          },
-          {
-            "value": "3:2"
-          },
-          {
-            "value": "1:1"
-          },
-          {
-            "value": "2:3"
-          },
-          {
-            "value": "5:4"
-          },
-          {
-            "value": "4:5"
-          },
-          {
-            "value": "16:9"
-          },
-          {
-            "value": "9:16"
-          },
-          {
-            "value": "21:9"
-          },
-          {
-            "value": "3:4"
-          },
-          {
-            "value": "4:3"
-          }
-        ],
-        "payload_as_prompt_suffix": {
-          "target_field": "prompt",
-          "position": "prefix",
-          "skip_values": [
-            "empty"
-          ],
-          "also_send_as_payload": true,
-          "templates_zh": {
-            "3:2": "横版 3:2，",
-            "1:1": "方图 1:1，",
-            "2:3": "竖版 2:3，",
-            "5:4": "横版 5:4，",
-            "4:5": "竖版 4:5，",
-            "16:9": "横版 16:9，",
-            "9:16": "竖版 9:16，",
-            "21:9": "横幅 21:9，",
-            "3:4": "竖版 3:4，",
-            "4:3": "横版 4:3，",
-            "_default": "画面比例 {value}，"
-          },
-          "templates_en": {
-            "3:2": "landscape 3:2, ",
-            "1:1": "square 1:1, ",
-            "2:3": "portrait 2:3, ",
-            "5:4": "landscape 5:4, ",
-            "4:5": "portrait 4:5, ",
-            "16:9": "landscape 16:9, ",
-            "9:16": "portrait 9:16, ",
-            "21:9": "banner 21:9, ",
-            "3:4": "portrait 3:4, ",
-            "4:3": "landscape 4:3, ",
-            "_default": "aspect ratio {value}, "
-          }
-        }
-      },
-      {
-        "fieldKey": "resolution",
-        "type": "LIST",
-        "required": false,
-        "label": "resolution",
-        "description": "resolution",
-        "defaultValue": "1k",
-        "options": [
-          {
-            "value": "1k"
-          },
-          {
-            "value": "2k"
-          },
-          {
-            "value": "4k"
-          }
-        ],
-        "tail_insert": true
-      }
-    ]
-  },
-  {
-    "class_name": "RhartImageG2TextToImage",
-    "display_name": "RH 全能图片G-2.0-文生图-低价渠道版",
-    "name_cn": "全能图片G-2.0-文生图-低价渠道版",
-    "name_en": "gpt-image-2.0/text-to-image-channel-low-price",
-    "endpoint": "rhart-image-g-2/text-to-image",
-    "output_type": "image",
-    "category": "LLFaigc/图像生成/全能图片G系列",
-    "params": [
-      {
-        "fieldKey": "prompt",
-        "type": "STRING",
-        "required": true,
-        "label": "prompt",
-        "description": "prompt",
-        "defaultValue": "生成一张充满未来感的咖啡馆宣传海报。画面中央是一个发光的霓虹灯招牌，上面清晰且准确地拼写着英文单词 \"CyberBrew\"。背景是带有极简主义和现代高级感的城市街道，光影具有强烈的 Stripe UI 风格。",
-        "maxLength": 20000
-      },
-      {
-        "fieldKey": "aspectRatio",
-        "type": "LIST",
-        "required": false,
-        "label": "aspectRatio",
-        "description": "aspectRatio (sent as API field AND injected as a prefix into prompt)",
+        "description": "aspectRatio",
         "defaultValue": "empty",
         "options": [
           {
