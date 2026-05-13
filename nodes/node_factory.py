@@ -17,6 +17,10 @@ import os
 import re
 from typing import Dict, List, Any, Optional
 
+import torch
+
+from comfy.utils import common_upscale
+
 from ..core.base import BaseNode
 from ..core.api_key import get_config
 from ..core.upload import upload_file
