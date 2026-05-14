@@ -36,8 +36,8 @@ git clone https://github.com/llf-11/LLFaigc.git
 
 安装依赖：
 
-```bash
-pip install -r LLFaigc/requirements.txt
+```cd LLFaigc
+pip install -r requirements.txt
 ```
 
 然后重启 ComfyUI。
