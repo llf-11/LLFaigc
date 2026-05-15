@@ -1,13 +1,18 @@
 """
-LLFaigc - GPT-Image-2 Official node (ported from Comfyui-zhenzhen).
+LLFaigc - GPT-Image-2 node (Official + FAL mode in one node).
 
 Self-contained: no dependency on zhenzhen's Comfly.py, utils.py, or Comflyapi.json.
 API key is provided via the node's ``api_key`` string input.
+
+Supports two API modes:
+  - official: multipart form POST to /v1/images/edits (sync or async)
+  - fal: JSON POST to /fal/openai/gpt-image-2 with queue polling
 
 Supports multi-prompt batch mode: one prompt per line, each line produces
 images that are concatenated into a single output batch.
 """
 
+import base64
 import io
 import math
 import re
@@ -34,6 +39,28 @@ def _pil2tensor(image):
         image = image.convert("RGB")
     arr = np.array(image).astype(np.float32) / 255.0
     return torch.from_numpy(arr)[None,]
+
+
+def _tensor2pil(image_tensor):
+    """ComfyUI IMAGE tensor -> list of PIL Images."""
+    images = []
+    batch_size = image_tensor.shape[0]
+    for i in range(batch_size):
+        img = image_tensor[i]
+        img_np = (img.cpu().numpy() * 255).astype(np.uint8)
+        images.append(Image.fromarray(img_np))
+    return images
+
+
+def _image_to_base64(image_tensor):
+    """Convert IMAGE tensor to base64 data URI."""
+    if image_tensor is None:
+        return None
+    pil_image = _tensor2pil(image_tensor)[0]
+    buffered = BytesIO()
+    pil_image.save(buffered, format="PNG")
+    b64_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    return f"data:image/png;base64,{b64_str}"
 
 
 def _downscale_input(image):
@@ -71,11 +98,15 @@ def _split_prompts(text):
 # ---------------------------------------------------------------------------
 
 class LLFaigcGptImage2Official:
-    """GPT-Image-2 official API node (zhenzhen-compatible, self-contained).
+    """GPT-Image-2 unified node (Official + FAL mode).
 
     Supports multi-prompt batch: fill in multiple prompts (one per line),
     and the node will call the API for each prompt and combine all results
     into a single IMAGE batch output.
+
+    api_mode:
+      - "official": multipart form to /v1/images/edits (sync/async)
+      - "fal": JSON to /fal/openai/gpt-image-2 with queue polling
     """
 
     _ASPECT_RATIO_CHOICES = [
@@ -89,6 +120,8 @@ class LLFaigcGptImage2Official:
     ]
 
     _RESOLUTION_CHOICES = ["auto", "1k", "2k", "4k"]
+
+    _API_MODE_CHOICES = ["official", "fal"]
 
     _SIZE_MAP = {
         # 1:1
@@ -118,6 +151,18 @@ class LLFaigcGptImage2Official:
         # 1:2
         ("1:2", "1k"): "1024x2048", ("1:2", "2k"): "1344x2688", ("1:2", "4k"): "1920x3840",
     }
+
+    # FAL image_size presets
+    _FAL_IMAGE_SIZE_CHOICES = [
+        "auto",
+        "square_hd",
+        "square",
+        "portrait_4_3",
+        "portrait_16_9",
+        "landscape_4_3",
+        "landscape_16_9",
+        "custom",
+    ]
 
     @staticmethod
     def _parse_size_wh(size_str):
@@ -158,6 +203,7 @@ class LLFaigcGptImage2Official:
     def INPUT_TYPES(cls):
         return {
             "required": {
+                "api_mode": (cls._API_MODE_CHOICES, {"default": "official"}),
                 "aspect_ratio": (cls._ASPECT_RATIO_CHOICES, {"default": "auto"}),
                 "resolution": (cls._RESOLUTION_CHOICES, {"default": "1k"}),
             },
@@ -197,6 +243,13 @@ class LLFaigcGptImage2Official:
                 "initial_timeout": ("INT", {"default": 900, "min": 60, "max": 1200}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xFFFFFFFFFFFFFFFF}),
                 "skip_error": ("BOOLEAN", {"default": False}),
+                # FAL-specific params
+                "fal_mode": (["generate", "edit"], {"default": "edit"}),
+                "fal_image_size": (cls._FAL_IMAGE_SIZE_CHOICES, {"default": "custom"}),
+                "fal_custom_width": ("INT", {"default": 3840, "min": 256, "max": 3840, "step": 16}),
+                "fal_custom_height": ("INT", {"default": 2160, "min": 256, "max": 3840, "step": 16}),
+                "fal_num_images": ("INT", {"default": 1, "min": 1, "max": 4}),
+                "fal_image_way": (["image_url", "base64"], {"default": "image_url"}),
             }
         }
 
@@ -276,6 +329,200 @@ class LLFaigcGptImage2Official:
         Image.new("RGB", (1024, 1024), color="white").save(buf, format="PNG")
         buf.seek(0)
         return ("blank.png", buf, "image/png")
+
+    # ===================================================================
+    # FAL mode helpers
+    # ===================================================================
+
+    def _upload_image_to_url(self, image_tensor):
+        """Upload IMAGE tensor to files API and return URL."""
+        if image_tensor is None:
+            return None
+        try:
+            pil_image = _tensor2pil(image_tensor)[0]
+            buffered = BytesIO()
+            pil_image.save(buffered, format="PNG")
+            file_content = buffered.getvalue()
+            files = {"file": ("image.png", file_content, "image/png")}
+            headers = {"Authorization": f"Bearer {self.api_key}"}
+            response = requests.post(
+                f"{_BASE_URL}/v1/files",
+                headers=headers,
+                files=files,
+                timeout=self.timeout,
+            )
+            response.raise_for_status()
+            result = response.json()
+            if "url" in result:
+                return result["url"]
+            print(f"  [FAL] Unexpected file upload response: {result}")
+            return None
+        except Exception as e:
+            print(f"  [FAL] Error uploading image: {e}")
+            return None
+
+    def _generate_single_fal(
+        self, prompt,
+        image1, image2, image3, image4, image5,
+        image6, image7, image8, image9, image10,
+        image11, image12, image13, image14, image15, image16,
+        mask,
+        fal_mode, fal_image_size, fal_custom_width, fal_custom_height,
+        fal_num_images, fal_image_way,
+        poll_interval, max_poll_attempts, seed,
+        quality, output_format,
+    ):
+        """FAL mode: JSON payload -> queue polling."""
+        fal_base = f"{_BASE_URL}/fal"
+        if fal_mode == "edit":
+            endpoint = "openai/gpt-image-2/edit"
+        else:
+            endpoint = "openai/gpt-image-2"
+        api_url = f"{fal_base}/{endpoint}"
+
+        # Build JSON payload
+        payload = {
+            "prompt": prompt,
+            "quality": quality,
+            "num_images": fal_num_images,
+            "output_format": output_format,
+        }
+
+        if fal_image_size == "custom":
+            w = (fal_custom_width // 16) * 16
+            h = (fal_custom_height // 16) * 16
+            payload["image_size"] = {"width": w, "height": h}
+        elif fal_image_size != "auto" or fal_mode == "generate":
+            payload["image_size"] = fal_image_size
+
+        if seed > 0:
+            payload["seed"] = seed
+
+        # Collect input images (FAL uses up to 4 images)
+        all_images = [image1, image2, image3, image4]
+        input_images = [img for img in all_images if img is not None]
+
+        image_urls = []
+        if input_images:
+            for idx, img in enumerate(input_images):
+                if fal_image_way == "base64":
+                    img_data = _image_to_base64(img)
+                else:
+                    img_data = self._upload_image_to_url(img)
+                if img_data:
+                    image_urls.append(img_data)
+                    print(f"  [FAL] Image {idx+1}/{len(input_images)} prepared")
+
+        if image_urls:
+            payload["image_urls"] = image_urls
+
+        # Process mask
+        if mask is not None:
+            if fal_image_way == "base64":
+                mask_data = _image_to_base64(mask)
+            else:
+                mask_data = self._upload_image_to_url(mask)
+            if mask_data:
+                payload["mask_image_url"] = mask_data
+                print(f"  [FAL] Mask image prepared")
+
+        print(f"  [FAL] Submitting to {api_url} (mode={fal_mode}, quality={quality}, size={fal_image_size})")
+
+        # Submit request
+        response = requests.post(
+            api_url,
+            headers=self._headers_json(),
+            json=payload,
+            timeout=self.timeout,
+        )
+
+        if response.status_code != 200:
+            raise RuntimeError(f"[FAL] API Error: {response.status_code} - {response.text[:500]}")
+
+        result = response.json()
+
+        # Check if result is immediate
+        if "images" in result and result["images"]:
+            result_data = result
+        else:
+            # Queue mode: poll for result
+            request_id = result.get("request_id")
+            response_url = result.get("response_url", "")
+
+            if not request_id:
+                raise RuntimeError(f"[FAL] No request_id in response: {str(result)[:300]}")
+
+            # Fix response_url to use our proxy
+            if "queue.fal.run" in response_url:
+                response_url = response_url.replace("https://queue.fal.run", fal_base)
+            if not response_url:
+                response_url = f"{fal_base}/{endpoint}/requests/{request_id}"
+
+            print(f"  [FAL] Queued, request_id={request_id}, polling...")
+
+            result_data = None
+            for attempt in range(max_poll_attempts):
+                time.sleep(poll_interval)
+                try:
+                    poll_resp = requests.get(
+                        response_url,
+                        headers=self._headers_json(),
+                        timeout=self.timeout,
+                    )
+                    if poll_resp.status_code != 200:
+                        continue
+                    poll_data = poll_resp.json()
+
+                    if "images" in poll_data and poll_data["images"]:
+                        result_data = poll_data
+                        break
+
+                    status = poll_data.get("status", "")
+                    if status in ("FAILED", "CANCELLED"):
+                        raise RuntimeError(f"[FAL] Task {status}: {poll_data.get('error', 'unknown')}")
+
+                except requests.exceptions.RequestException as e:
+                    print(f"  [FAL] Poll error: {e}")
+                    continue
+
+            if result_data is None:
+                raise RuntimeError(f"[FAL] Timeout: no result after {max_poll_attempts * poll_interval}s")
+
+        # Download result images
+        images_list = result_data.get("images", [])
+        if not images_list:
+            raise RuntimeError("[FAL] No images in result")
+
+        generated_tensors = []
+        url_list = []
+        for i, img_info in enumerate(images_list):
+            img_url = img_info.get("url", "")
+            if not img_url:
+                continue
+            url_list.append(img_url)
+            try:
+                img_resp = requests.get(img_url, timeout=self.timeout)
+                if img_resp.status_code == 200:
+                    pil_img = Image.open(BytesIO(img_resp.content))
+                    generated_tensors.append(_pil2tensor(pil_img))
+            except Exception as e:
+                print(f"  [FAL] Error downloading image {i+1}: {e}")
+
+        if not generated_tensors:
+            raise RuntimeError("[FAL] Failed to download any result images")
+
+        combined = torch.cat(generated_tensors, dim=0)
+        urls_str = "\n".join(url_list)
+        info = (
+            f"  Mode: fal ({fal_mode})\n"
+            f"  Quality: {quality} | Size: {fal_image_size}\n"
+            f"  Images: {len(generated_tensors)}"
+        )
+        return combined, url_list[0] if url_list else "", info
+
+    # ===================================================================
+    # Official mode helpers (original logic)
+    # ===================================================================
 
     def _build_official_edits_multipart(
         self, prompt, image1, image2, image3, image4, image5,
@@ -370,7 +617,6 @@ class LLFaigcGptImage2Official:
         return data, request_files
 
     def _decode_b64_url_one(self, b64_json, image_url, max_retries, initial_timeout):
-        import base64
         if b64_json:
             b64_data = b64_json
             if b64_data.startswith("data:image"):
@@ -484,7 +730,6 @@ class LLFaigcGptImage2Official:
         raise RuntimeError(f"Failed to get image after {max_poll_attempts} poll attempts")
 
     def _items_to_tensors(self, result, max_retries=5, initial_timeout=300):
-        import base64
         out = []
         for item in result.get("data", []) or []:
             if "b64_json" in item and item["b64_json"]:
@@ -626,7 +871,7 @@ class LLFaigcGptImage2Official:
     # -----------------------------------------------------------------------
 
     def generate(
-        self, prompts, aspect_ratio="1:1", resolution="1k",
+        self, prompts, api_mode="official", aspect_ratio="1:1", resolution="1k",
         image1=None, image2=None, image3=None, image4=None, image5=None,
         image6=None, image7=None, image8=None, image9=None, image10=None,
         image11=None, image12=None, image13=None, image14=None, image15=None, image16=None,
@@ -636,6 +881,8 @@ class LLFaigcGptImage2Official:
         response_format="url",
         async_mode=True, webhook="", max_poll_attempts=300, poll_interval=5,
         max_retries=5, initial_timeout=900, seed=0, skip_error=False,
+        fal_mode="edit", fal_image_size="custom", fal_custom_width=3840, fal_custom_height=2160,
+        fal_num_images=1, fal_image_way="image_url",
     ):
         if api_key.strip():
             self.api_key = api_key
@@ -656,13 +903,7 @@ class LLFaigcGptImage2Official:
             return (blank_t, "", msg)
 
         total_prompts = len(prompt_list)
-        print(f"**LLFaigc GPT-Image-2 Batch** Starting batch with {total_prompts} prompt(s)")
-
-        # Validate size once (same for all prompts)
-        size, error_msg = self._get_size_from_params(aspect_ratio, resolution)
-        if error_msg:
-            print(error_msg)
-            return (blank_t, "", error_msg)
+        print(f"**LLFaigc GPT-Image-2** Starting batch with {total_prompts} prompt(s) [mode={api_mode}]")
 
         pbar = comfy.utils.ProgressBar(100)
 
@@ -673,17 +914,38 @@ class LLFaigcGptImage2Official:
         for idx, single_prompt in enumerate(prompt_list):
             print(f"[{idx + 1}/{total_prompts}] Generating: \"{single_prompt[:80]}{'...' if len(single_prompt) > 80 else ''}\"")
 
-            result_tensor, result_url, result_info = self._generate_single(
-                single_prompt, aspect_ratio, resolution,
-                image1, image2, image3, image4, image5,
-                image6, image7, image8, image9, image10,
-                image11, image12, image13, image14, image15, image16,
-                mask, model, n, quality, background,
-                output_format, output_compression, moderation,
-                response_format, async_mode, webhook,
-                max_poll_attempts, poll_interval,
-                max_retries, initial_timeout,
-            )
+            if api_mode == "fal":
+                # FAL mode
+                result_tensor, result_url, result_info = self._generate_single_fal(
+                    single_prompt,
+                    image1, image2, image3, image4, image5,
+                    image6, image7, image8, image9, image10,
+                    image11, image12, image13, image14, image15, image16,
+                    mask,
+                    fal_mode, fal_image_size, fal_custom_width, fal_custom_height,
+                    fal_num_images, fal_image_way,
+                    poll_interval, max_poll_attempts, seed,
+                    quality, output_format,
+                )
+            else:
+                # Official mode
+                # Validate size once (same for all prompts)
+                size, error_msg = self._get_size_from_params(aspect_ratio, resolution)
+                if error_msg:
+                    print(error_msg)
+                    return (blank_t, "", error_msg)
+
+                result_tensor, result_url, result_info = self._generate_single(
+                    single_prompt, aspect_ratio, resolution,
+                    image1, image2, image3, image4, image5,
+                    image6, image7, image8, image9, image10,
+                    image11, image12, image13, image14, image15, image16,
+                    mask, model, n, quality, background,
+                    output_format, output_compression, moderation,
+                    response_format, async_mode, webhook,
+                    max_poll_attempts, poll_interval,
+                    max_retries, initial_timeout,
+                )
 
             if result_tensor is not None:
                 all_tensors.append(result_tensor)
@@ -693,8 +955,7 @@ class LLFaigcGptImage2Official:
                 print(f"  [!] Prompt #{idx + 1} failed: {result_info}")
                 if not skip_error:
                     if all_tensors:
-                        # Return what we have so far on error
-                        pass
+                        pass  # Return what we have so far
                     else:
                         return (blank_t, "", result_info)
 
@@ -734,7 +995,8 @@ class LLFaigcGptImage2Official:
         combined = torch.cat(normalized, dim=0)
 
         summary = (
-            f"**LLFaigc GPT-Image-2 Batch** Complete\n"
+            f"**LLFaigc GPT-Image-2** Complete\n"
+            f"API Mode: {api_mode}\n"
             f"Total prompts: {total_prompts}\n"
             f"Successful: {len(all_tensors)}\n"
             f"Total images generated: {combined.shape[0]}\n"
