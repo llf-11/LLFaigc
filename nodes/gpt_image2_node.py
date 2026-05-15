@@ -874,7 +874,7 @@ class LLFaigcGptImage2Official:
         image1=None, image2=None, image3=None, image4=None, image5=None,
         image6=None, image7=None, image8=None, image9=None, image10=None,
         image11=None, image12=None, image13=None, image14=None, image15=None, image16=None,
-        mask=None, api_key="", model="gpt-image-2",
+        mask=None, api_key="",
         n=1, quality="auto", background="auto",
         output_format="png", output_compression=100, moderation="auto",
         response_format="url",
