@@ -104,9 +104,9 @@ class LLFaigcGptImage2Official:
     and the node will call the API for each prompt and combine all results
     into a single IMAGE batch output.
 
-    api_mode:
-      - "official": multipart form to /v1/images/edits (sync/async)
-      - "fal": JSON to /fal/openai/gpt-image-2 with queue polling
+    Model selection auto-switches API mode:
+      - "gpt-image-2" / "gpt-image-2-all": Official (multipart form)
+      - "gpt-image-2-fal": FAL (JSON + queue polling)
     """
 
     _ASPECT_RATIO_CHOICES = [
@@ -121,7 +121,7 @@ class LLFaigcGptImage2Official:
 
     _RESOLUTION_CHOICES = ["auto", "1k", "2k", "4k"]
 
-    _API_MODE_CHOICES = ["official", "fal"]
+    _MODEL_CHOICES = ["gpt-image-2", "gpt-image-2-all", "gpt-image-2-fal"]
 
     _SIZE_MAP = {
         # 1:1
@@ -203,7 +203,7 @@ class LLFaigcGptImage2Official:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "api_mode": (cls._API_MODE_CHOICES, {"default": "official"}),
+                "model": (cls._MODEL_CHOICES, {"default": "gpt-image-2"}),
                 "aspect_ratio": (cls._ASPECT_RATIO_CHOICES, {"default": "auto"}),
                 "resolution": (cls._RESOLUTION_CHOICES, {"default": "1k"}),
             },
@@ -227,7 +227,6 @@ class LLFaigcGptImage2Official:
                 "image16": ("IMAGE",),
                 "mask": ("MASK",),
                 "api_key": ("STRING", {"default": ""}),
-                "model": (["gpt-image-2", "gpt-image-2-all"], {"default": "gpt-image-2"}),
                 "n": ("INT", {"default": 1, "min": 1, "max": 10}),
                 "quality": (["auto", "high", "medium", "low"], {"default": "auto"}),
                 "background": (["auto", "opaque"], {"default": "auto"}),
@@ -871,7 +870,7 @@ class LLFaigcGptImage2Official:
     # -----------------------------------------------------------------------
 
     def generate(
-        self, prompts, api_mode="official", aspect_ratio="1:1", resolution="1k",
+        self, prompts, model="gpt-image-2", aspect_ratio="1:1", resolution="1k",
         image1=None, image2=None, image3=None, image4=None, image5=None,
         image6=None, image7=None, image8=None, image9=None, image10=None,
         image11=None, image12=None, image13=None, image14=None, image15=None, image16=None,
@@ -886,6 +885,10 @@ class LLFaigcGptImage2Official:
     ):
         if api_key.strip():
             self.api_key = api_key
+
+        # Auto-detect API mode from model name
+        is_fal = model == "gpt-image-2-fal"
+        api_mode = "fal" if is_fal else "official"
 
         blank = Image.new("RGB", (1024, 1024), color="white")
         blank_t = _pil2tensor(blank)
